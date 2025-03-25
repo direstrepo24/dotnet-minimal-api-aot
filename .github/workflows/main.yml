@@ -40,7 +40,7 @@ jobs:
       - name: Login to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway login
+        run: railway login --browserless
         
       - name: Deploy to Railway
         env:
