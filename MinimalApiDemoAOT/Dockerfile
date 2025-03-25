@@ -10,10 +10,10 @@ RUN dotnet restore
 
 # Copiar todo y compilar
 COPY . ./
-RUN dotnet publish -c Release -o out -r linux-arm64 --self-contained /p:PublishAot=true
+RUN dotnet publish -c Release -o out -r linux-x64 --self-contained /p:PublishAot=true
 
 # Imagen final basada en runtime-deps (más ligera, sólo para AOT)
-FROM mcr.microsoft.com/dotnet/runtime-deps:9.0-alpine
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0
 WORKDIR /app
 COPY --from=build /app/out .
 
