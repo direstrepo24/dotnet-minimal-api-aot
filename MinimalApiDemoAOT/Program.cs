@@ -15,7 +15,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 var app = builder.Build();
 
 // Endpoint para la raíz
-app.MapGet("/", () => "¡Hola desde .NET Native AOT desplegado en Railway!");
+app.MapGet("/", () => "¡Hola desde .NET Native AOT desplegado en Railway con GitHub Actions!");
 
 // Endpoint de información básico
 app.MapGet("/api/info", () => new ApiInfo
