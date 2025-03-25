@@ -39,8 +39,8 @@ jobs:
         
       - name: Deploy to Railway
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
         run: |
           cd MinimalApiDemoAOT
-          RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }} railway link --service ${{ secrets.RAILWAY_SERVICE }}
-          RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }} railway up
+          railway link --project my-net-project
+          railway up
