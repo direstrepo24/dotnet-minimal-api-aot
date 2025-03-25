@@ -34,11 +34,10 @@ jobs:
           push: true
           tags: direstrepobr/minimal-api-demo:aot
       
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-        
       - name: Deploy to Railway
-        run: |
-          cd MinimalApiDemoAOT
-          RAILWAY_API_TOKEN=${{ secrets.RAILWAY_API_TOKEN }} railway link --project c17144a1-ab5c-4b42-b368-a17c90ea8a9e --environment 81ef578a-6dfd-41ec-a77e-ceb350527cd3 --service a51bbd9c-6389-4342-8342-0de4cb6ded3b
-          RAILWAY_API_TOKEN=${{ secrets.RAILWAY_API_TOKEN }} railway up
+        uses: railwayapp/cli@master
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        with:
+          command: up --service a51bbd9c-6389-4342-8342-0de4cb6ded3b
+          workingDir: ./MinimalApiDemoAOT
