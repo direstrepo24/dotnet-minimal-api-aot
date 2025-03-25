@@ -38,9 +38,7 @@ jobs:
         run: npm install -g @railway/cli
         
       - name: Deploy to Railway
-        env:
-          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
         run: |
           cd MinimalApiDemoAOT
-          railway link --project my-net-project
-          railway up
+          RAILWAY_API_TOKEN=${{ secrets.RAILWAY_API_TOKEN }} railway link --project c17144a1-ab5c-4b42-b368-a17c90ea8a9e --environment 81ef578a-6dfd-41ec-a77e-ceb350527cd3 --service a51bbd9c-6389-4342-8342-0de4cb6ded3b
+          RAILWAY_API_TOKEN=${{ secrets.RAILWAY_API_TOKEN }} railway up
