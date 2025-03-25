@@ -15,14 +15,15 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 var app = builder.Build();
 
 // Endpoint para la raíz
-app.MapGet("/", () => "¡Hola desde .NET Native AOT en Azion!");
+app.MapGet("/", () => "¡Hola desde .NET Native AOT desplegado en Railway!");
 
 // Endpoint de información básico
 app.MapGet("/api/info", () => new ApiInfo
 {
-    Name = "Contenedor .NET AOT",
-    Version = "1.0",
+    Name = "API .NET Native AOT en Railway",
+    Version = "1.1",
     Working = true,
+    Platform = "Railway",
     Timestamp = DateTime.UtcNow
 });
 
@@ -35,6 +36,7 @@ public record ApiInfo
     public string Name { get; init; } = "";
     public string Version { get; init; } = "";
     public bool Working { get; init; }
+    public string Platform { get; init; } = "";
     public DateTime Timestamp { get; init; }
 }
 
