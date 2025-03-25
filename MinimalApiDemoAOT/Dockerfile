@@ -18,5 +18,6 @@ WORKDIR /app
 COPY --from=build /app/out .
 
 # Puerto y comando de inicio
-EXPOSE 8080
-ENTRYPOINT ["./MinimalApiDemoAOT"]
+ENV PORT=8080
+EXPOSE ${PORT}
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_URLS=http://0.0.0.0:${PORT} ./MinimalApiDemoAOT"]

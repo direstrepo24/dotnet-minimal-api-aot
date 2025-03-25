@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "ASPNETCORE_URLS=http://0.0.0.0:$PORT ./MinimalApiDemoAOT"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+
+[deploy.envs]
+PORT = "8080"

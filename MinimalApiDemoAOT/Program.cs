@@ -2,10 +2,9 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-// Configurar explícitamente para escuchar en puerto 8080
-builder.WebHost.ConfigureKestrel(options => {
-    options.ListenAnyIP(8080); // Puerto 8080 para Azion
-});
+// La configuración del puerto se hace a través de la variable de entorno ASPNETCORE_URLS
+// que es establecida en el Dockerfile y railway.toml
+// No necesitamos configurar explícitamente el puerto aquí
 
 // Configurar JSON serialization para AOT
 builder.Services.ConfigureHttpJsonOptions(options =>
