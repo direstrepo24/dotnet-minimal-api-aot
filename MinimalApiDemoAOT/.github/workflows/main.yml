@@ -29,8 +29,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./MinimalApiDemoAOT
+          file: ./MinimalApiDemoAOT/Dockerfile
           push: true
           tags: direstrepobr/minimal-api-demo:aot
       
@@ -42,5 +42,6 @@ jobs:
         
       - name: Deploy to Railway
         run: |
+          cd MinimalApiDemoAOT
           railway link --service ${{ secrets.RAILWAY_SERVICE }}
           railway up
