@@ -2,15 +2,13 @@ name: Deploy to Railway
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -33,12 +31,15 @@ jobs:
           file: ./MinimalApiDemoAOT/Dockerfile
           push: true
           tags: direstrepobr/minimal-api-demo:aot
-      
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-        
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      SVC_ID: a51bbd9c-6389-4342-8342-0de4cb6ded3b
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
       - name: Deploy to Railway
-        run: |
-          cd MinimalApiDemoAOT
-          RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }} railway link --project c17144a1-ab5c-4b42-b368-a17c90ea8a9e
-          RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }} railway up
+        run: railway up --service=${{ env.SVC_ID }}
