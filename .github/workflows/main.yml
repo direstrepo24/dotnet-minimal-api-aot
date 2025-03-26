@@ -1,0 +1,39 @@
+name: Build & Deploy to Railway
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore MinimalApiDemoAOT.sln
+
+      - name: Build
+        run: dotnet build MinimalApiDemoAOT.sln --no-restore --configuration Release
+
+  deploy-to-railway:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      SVC_ID: a51bbd9c-6389-4342-8342-0de4cb6ded3b
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Deploy to Railway
+        run: railway up --service=${{ env.SVC_ID }}
