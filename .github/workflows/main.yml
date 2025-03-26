@@ -30,10 +30,10 @@ jobs:
     container: ghcr.io/railwayapp/cli:latest
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      SVC_ID: a51bbd9c-6389-4342-8342-0de4cb6ded3b
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Deploy to Railway
-        run: railway up --service=${{ env.SERVICE_ID }}
+        run: railway up --service=${{ env.SVC_ID }}
