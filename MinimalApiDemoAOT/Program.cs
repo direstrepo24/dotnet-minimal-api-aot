@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.ConfigureHttpJsonOptions(options => {
+    options.SerializerOptions.TypeInfoResolver = ApiJsonSerializerContext.Default;
+});
 
 var app = builder.Build();
 
@@ -42,6 +46,11 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 
 app.Run();
+
+[JsonSerializable(typeof(WeatherForecast[]))]  // Agregar esto para soporte AOT
+internal partial class ApiJsonSerializerContext : JsonSerializerContext
+{
+}
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
