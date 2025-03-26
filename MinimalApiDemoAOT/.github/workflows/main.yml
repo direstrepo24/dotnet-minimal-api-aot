@@ -19,10 +19,10 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore MinimalApiDemoAOT/MinimalApiDemoAOT.csproj
+        run: dotnet restore MinimalApiDemoAOT.sln
 
       - name: Build
-        run: dotnet build MinimalApiDemoAOT/MinimalApiDemoAOT.csproj --no-restore --configuration Release
+        run: dotnet build MinimalApiDemoAOT.sln --no-restore --configuration Release
 
   deploy-to-railway:
     needs: build-and-test
@@ -30,12 +30,10 @@ jobs:
     container: ghcr.io/railwayapp/cli:latest
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      SVC_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Deploy to Railway
-        run: |
-          cd MinimalApiDemoAOT
-          railway up --service=${{ env.SERVICE_ID }}
+        run: railway up --service=${{ env.SVC_ID }}
