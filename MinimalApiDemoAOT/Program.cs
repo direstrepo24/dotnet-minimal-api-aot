@@ -1,30 +1,27 @@
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Swagger;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-app.UseHttpsRedirection();
-
-// Endpoint para la raíz
-app.MapGet("/", () => "¡Hola desde .NET Minimal API desplegado en Railway con GitHub Actions!");
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Endpoint de health check para Railway
 app.MapGet("/healthz", () => Results.Ok("Healthy"));
 
-// Endpoint de información básico
-app.MapGet("/api/info", () => new ApiInfo
-{
-    Name = "API .NET Minimal API en Railway",
-    Version = "1.1",
-    Working = true,
-    Platform = "Railway",
-    Timestamp = DateTime.UtcNow
-});
+// Endpoint para la raíz
+app.MapGet("/", () => "¡Hola desde .NET Minimal API desplegado en Railway con GitHub Actions!");
 
-// Weather forecast endpoint
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -44,18 +41,7 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-// Iniciar la aplicación
 app.Run();
-
-// Records y classes
-public record ApiInfo
-{
-    public string Name { get; init; } = "";
-    public string Version { get; init; } = "";
-    public bool Working { get; init; }
-    public string Platform { get; init; } = "";
-    public DateTime Timestamp { get; init; }
-}
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
