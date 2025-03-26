@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder(args);
+// Uso de CreateSlimBuilder para optimizar AOT
+var builder = WebApplication.CreateSlimBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
@@ -47,7 +48,10 @@ app.MapGet("/weatherforecast", () =>
 
 app.Run();
 
-[JsonSerializable(typeof(WeatherForecast[]))]  // Agregar esto para soporte AOT
+// Definición completa de tipos serializables para AOT
+[JsonSerializable(typeof(WeatherForecast[]))]  
+[JsonSerializable(typeof(WeatherForecast))]  
+[JsonSerializable(typeof(string))]  // Para respuestas simples como el health check
 internal partial class ApiJsonSerializerContext : JsonSerializerContext
 {
 }
