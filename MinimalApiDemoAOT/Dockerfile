@@ -1,23 +1,19 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-# Install clang/zlib1g-dev dependencies for publishing to native
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    clang zlib1g-dev
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["MinimalApiDemoAOT.csproj", "./"]
-RUN dotnet restore "MinimalApiDemoAOT.csproj"
-COPY . .
-WORKDIR "/src"
-RUN dotnet build "MinimalApiDemoAOT.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "MinimalApiDemoAOT.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=true
-
-FROM mcr.microsoft.com/dotnet/runtime-deps:8.0 AS final
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
+
+COPY MinimalApiDemoAOT.csproj ./
+RUN dotnet restore
+
+COPY . ./
+RUN dotnet publish MinimalApiDemoAOT.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+
 EXPOSE 8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://+:8080
 ENV PORT=8080
-COPY --from=publish /app/publish .
-ENTRYPOINT ["./MinimalApiDemoAOT"]
+
+ENTRYPOINT ["dotnet", "MinimalApiDemoAOT.dll"]

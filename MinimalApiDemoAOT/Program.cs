@@ -1,21 +1,15 @@
-using System.Text.Json.Serialization;
+var builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateSlimBuilder(args);
-
-// La configuración del puerto se hace a través de la variable de entorno ASPNETCORE_URLS
-// que es establecida en el Dockerfile y railway.toml
-// No necesitamos configurar explícitamente el puerto aquí
-
-// Configurar JSON serialization para AOT
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
-});
+// Add services to the container
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline
+app.UseHttpsRedirection();
+
 // Endpoint para la raíz
-app.MapGet("/", () => "¡Hola desde .NET Native AOT desplegado en Railway con GitHub Actions!");
+app.MapGet("/", () => "¡Hola desde .NET Minimal API desplegado en Railway con GitHub Actions!");
 
 // Endpoint de health check para Railway
 app.MapGet("/healthz", () => Results.Ok("Healthy"));
@@ -23,17 +17,37 @@ app.MapGet("/healthz", () => Results.Ok("Healthy"));
 // Endpoint de información básico
 app.MapGet("/api/info", () => new ApiInfo
 {
-    Name = "API .NET Native AOT en Railway",
+    Name = "API .NET Minimal API en Railway",
     Version = "1.1",
     Working = true,
     Platform = "Railway",
     Timestamp = DateTime.UtcNow
 });
 
+// Weather forecast endpoint
+var summaries = new[]
+{
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+app.MapGet("/weatherforecast", () =>
+{
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWeatherForecast");
+
 // Iniciar la aplicación
 app.Run();
 
-// Records y classes para serialización AOT
+// Records y classes
 public record ApiInfo
 {
     public string Name { get; init; } = "";
@@ -43,9 +57,7 @@ public record ApiInfo
     public DateTime Timestamp { get; init; }
 }
 
-// Contexto de serialización requerido para AOT
-[JsonSerializable(typeof(ApiInfo))]
-[JsonSerializable(typeof(string))]
-internal partial class AppJsonSerializerContext : JsonSerializerContext
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
