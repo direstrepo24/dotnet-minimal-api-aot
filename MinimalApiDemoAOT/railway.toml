@@ -3,10 +3,14 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "ASPNETCORE_URLS=http://0.0.0.0:$PORT ./MinimalApiDemoAOT"
-healthcheckPath = "/"
-healthcheckTimeout = 300
+startCommand = "./MinimalApiDemoAOT"
+numReplicas = 1
+sleepApplication = false
 restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+healthcheckPath = "/healthz"
+healthcheckTimeout = 300
 
 [deploy.envs]
 PORT = "8080"
+ASPNETCORE_URLS = "http://0.0.0.0:${PORT}"

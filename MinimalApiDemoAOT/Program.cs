@@ -17,6 +17,9 @@ var app = builder.Build();
 // Endpoint para la raíz
 app.MapGet("/", () => "¡Hola desde .NET Native AOT desplegado en Railway con GitHub Actions!");
 
+// Endpoint de health check para Railway
+app.MapGet("/healthz", () => Results.Ok("Healthy"));
+
 // Endpoint de información básico
 app.MapGet("/api/info", () => new ApiInfo
 {
